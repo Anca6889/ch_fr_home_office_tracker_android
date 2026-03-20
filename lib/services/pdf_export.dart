@@ -48,16 +48,14 @@ PdfColor _hex(String h) {
   return PdfColor.fromInt(v | 0xFF000000);
 }
 
-final _dark   = _hex('#1A1B2E');
-final _panel  = _hex('#252640');
-final _accent = _hex('#7EB8F0');
-final _fgDim  = _hex('#6C6F9C');
-final _fgMain = _hex('#D0D3F0');
-final _bgPage = _hex('#F7F8FC');
-final _bgMnth = PdfColors.white;
-final _border = _hex('#DDDDEE');
-final _wkend  = _hex('#F0F0F4');
-final _wkFg   = _hex('#AAAABC');
+final _headerBg   = _hex('#EEF0FB');   // header / footer background
+final _monthHdrBg = _hex('#DDE0F5');   // month name bar background
+final _accent     = _hex('#2A5FA8');   // titles & accents (dark blue, readable on light)
+final _fgDim      = _hex('#6C6F9C');   // secondary text
+final _fgMain     = _hex('#1A1B2E');   // primary dark text
+final _bgMnth     = PdfColors.white;
+final _border     = _hex('#DDDDEE');
+final _wkFg       = _hex('#AAAABC');
 
 // ── Page root ─────────────────────────────────────────────────────────────────
 
@@ -89,8 +87,9 @@ pw.Widget _buildHeader(int year, String username) {
   return pw.Container(
     height: 60,
     decoration: pw.BoxDecoration(
-      color: _dark,
+      color: _headerBg,
       borderRadius: const pw.BorderRadius.all(pw.Radius.circular(4)),
+      border: pw.Border.all(color: _border, width: 0.5),
     ),
     child: pw.Stack(
       children: [
@@ -113,7 +112,7 @@ pw.Widget _buildHeader(int year, String username) {
           child: pw.Container(
             padding: const pw.EdgeInsets.symmetric(horizontal: 8, vertical: 2),
             decoration: pw.BoxDecoration(
-              color: _panel,
+              color: _monthHdrBg,
               borderRadius: const pw.BorderRadius.all(pw.Radius.circular(3)),
             ),
             child: pw.Text(
@@ -126,7 +125,7 @@ pw.Widget _buildHeader(int year, String username) {
           right: 14, top: 10,
           child: pw.Text(
             '$year',
-            style: pw.TextStyle(color: PdfColors.white, fontSize: 22, fontWeight: pw.FontWeight.bold),
+            style: pw.TextStyle(color: _fgMain, fontSize: 22, fontWeight: pw.FontWeight.bold),
           ),
         ),
         pw.Positioned(
@@ -190,7 +189,7 @@ pw.Widget _buildMonth(DataStore store, int year, int month) {
       children: [
         // Month name header
         pw.Container(
-          color: _panel,
+          color: _monthHdrBg,
           padding: const pw.EdgeInsets.symmetric(vertical: 3),
           child: pw.Center(
             child: pw.Text(
@@ -292,15 +291,16 @@ pw.Widget _buildSummary(
   ComplianceResult r,
 ) {
   final isOk     = r.isOk;
-  final statusBg = isOk ? _hex('#1B4332') : _hex('#4A0A14');
-  final statusFg = isOk ? _hex('#5CBF8A') : _hex('#E85C6A');
+  final statusBg = isOk ? _hex('#D5F5E3') : _hex('#FAD7DA');
+  final statusFg = isOk ? _hex('#1B6B3A') : _hex('#8B2030');
   final reason   = r.statusReason.replaceAll('\n', '  ');
 
   return pw.Container(
     height: 148,
     decoration: pw.BoxDecoration(
-      color: _dark,
+      color: _headerBg,
       borderRadius: const pw.BorderRadius.all(pw.Radius.circular(4)),
+      border: pw.Border.all(color: _border, width: 0.5),
     ),
     child: pw.Column(
       crossAxisAlignment: pw.CrossAxisAlignment.stretch,
@@ -377,7 +377,7 @@ pw.Widget _buildSummary(
                     pw.Text(
                       '$count',
                       style: pw.TextStyle(
-                        color: PdfColors.white,
+                        color: _fgMain,
                         fontSize: 16,
                         fontWeight: pw.FontWeight.bold,
                       ),
@@ -388,7 +388,7 @@ pw.Widget _buildSummary(
                     ),
                     pw.Text(
                       label,
-                      style: pw.TextStyle(color: _fgMain, fontSize: 5.5),
+                      style: pw.TextStyle(color: _fgDim, fontSize: 5.5),
                     ),
                   ],
                 );
@@ -409,7 +409,7 @@ pw.Widget _metric(String label, String value) {
       pw.Text(
         value,
         style: pw.TextStyle(
-          color: PdfColors.white,
+          color: _fgMain,
           fontSize: 8,
           fontWeight: pw.FontWeight.bold,
         ),
