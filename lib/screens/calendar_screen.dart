@@ -24,7 +24,8 @@ class CalendarScreen extends StatefulWidget {
 class _CalendarScreenState extends State<CalendarScreen> {
   late int _month;
   late int _year;
-  int _slideDir = 1; // 1 = slide from right, -1 = slide from left
+  int    _slideDir   = 1;
+  double _dragStartX = 0;
 
   @override
   void initState() {
@@ -103,32 +104,38 @@ class _CalendarScreenState extends State<CalendarScreen> {
         ),
         // ── Calendar grid (swipeable) ─────────────────────────────────────
         Expanded(
-          child: GestureDetector(
-            onHorizontalDragEnd: (details) {
-              final v = details.primaryVelocity ?? 0;
-              if (v < -200) _nextMonth();
-              else if (v > 200) _prevMonth();
+          child: Listener(
+            onPointerDown: (e) => _dragStartX = e.position.dx,
+            onPointerUp: (e) {
+              final dx = e.position.dx - _dragStartX;
+              if (dx < -60)      _nextMonth();
+              else if (dx > 60)  _prevMonth();
             },
-            child: AnimatedSwitcher(
-              duration: const Duration(milliseconds: 300),
-              transitionBuilder: (child, animation) => SlideTransition(
-                position: Tween<Offset>(
-                  begin: Offset(_slideDir.toDouble(), 0),
-                  end:   Offset.zero,
-                ).animate(CurvedAnimation(parent: animation, curve: Curves.easeInOut)),
-                child: child,
-              ),
-              child: Padding(
-                key: ValueKey('$_year-$_month'),
-                padding: const EdgeInsets.all(8),
-                child: CalendarGrid(
-                  store:     widget.store,
-                  year:      _year,
-                  month:     _month,
-                  onChanged: () {
-                    widget.onChanged();
-                    setState(() {});
-                  },
+            child: ClipRect(
+              child: AnimatedSwitcher(
+                duration: const Duration(milliseconds: 300),
+                transitionBuilder: (child, animation) {
+                  final isNew = child.key == ValueKey('$_year-$_month');
+                  return SlideTransition(
+                    position: Tween<Offset>(
+                      begin: Offset(isNew ? _slideDir.toDouble() : -_slideDir.toDouble(), 0),
+                      end:   Offset.zero,
+                    ).animate(CurvedAnimation(parent: animation, curve: Curves.easeInOut)),
+                    child: child,
+                  );
+                },
+                child: Padding(
+                  key: ValueKey('$_year-$_month'),
+                  padding: const EdgeInsets.all(8),
+                  child: CalendarGrid(
+                    store:     widget.store,
+                    year:      _year,
+                    month:     _month,
+                    onChanged: () {
+                      widget.onChanged();
+                      setState(() {});
+                    },
+                  ),
                 ),
               ),
             ),
