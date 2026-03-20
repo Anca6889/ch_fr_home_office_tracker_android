@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../app_theme.dart';
 import '../constants.dart';
 import '../models/compliance_result.dart';
 import '../services/compliance_engine.dart';
@@ -62,6 +63,7 @@ class _CalendarScreenState extends State<CalendarScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final c      = AppTheme.of(context).colors;
     final counts = widget.store.yearCounts(widget.year);
     final result = computeStatus(counts);
 
@@ -69,12 +71,12 @@ class _CalendarScreenState extends State<CalendarScreen> {
       children: [
         // ── Month navigation bar ──────────────────────────────────────────
         Container(
-          color: clrBgPanel,
+          color: c.bgPanel,
           padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
           child: Row(
             children: [
               IconButton(
-                icon: const Icon(Icons.chevron_left, color: clrFg),
+                icon: Icon(Icons.chevron_left, color: c.fg),
                 onPressed: _prevMonth,
               ),
               Expanded(
@@ -83,8 +85,8 @@ class _CalendarScreenState extends State<CalendarScreen> {
                   child: Text(
                     '${monthsEn[_month - 1]}  $_year',
                     textAlign: TextAlign.center,
-                    style: const TextStyle(
-                      color: clrFg,
+                    style: TextStyle(
+                      color: c.fg,
                       fontSize: 16,
                       fontWeight: FontWeight.bold,
                     ),
@@ -93,10 +95,10 @@ class _CalendarScreenState extends State<CalendarScreen> {
               ),
               TextButton(
                 onPressed: _goToday,
-                child: const Text('Today', style: TextStyle(color: clrAccent)),
+                child: Text('Today', style: TextStyle(color: c.accent)),
               ),
               IconButton(
-                icon: const Icon(Icons.chevron_right, color: clrFg),
+                icon: Icon(Icons.chevron_right, color: c.fg),
                 onPressed: _nextMonth,
               ),
             ],
@@ -166,8 +168,9 @@ class _StatusChip extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final bg    = result.isOk ? const Color(0xFF1B4332) : const Color(0xFF4A0A14);
-    final fg    = result.isOk ? clrOk : clrDanger;
+    final c  = AppTheme.of(context).colors;
+    final bg = result.isOk ? c.statusOkBg : c.statusDangerBg;
+    final fg = result.isOk ? c.ok : c.danger;
     final lines = result.statusReason.split('\n');
 
     return Container(
@@ -189,8 +192,9 @@ class _StatusChip extends StatelessWidget {
 class _Legend extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+    final c = AppTheme.of(context).colors;
     return Container(
-      color: clrBgPanel,
+      color: c.bgPanel,
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
       child: SingleChildScrollView(
         scrollDirection: Axis.horizontal,
@@ -207,7 +211,7 @@ class _Legend extends StatelessWidget {
                   ),
                 ),
                 const SizedBox(width: 5),
-                Text(cat.label, style: const TextStyle(color: clrFgDim, fontSize: 11)),
+                Text(cat.label, style: TextStyle(color: c.fgDim, fontSize: 11)),
               ],
             ),
           )).toList(),
@@ -225,9 +229,10 @@ class _MonthPickerDialog extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final c = AppTheme.of(context).colors;
     return AlertDialog(
-      backgroundColor: clrBgPanel,
-      title: const Text('Select month', style: TextStyle(color: clrFg)),
+      backgroundColor: c.bgPanel,
+      title: Text('Select month', style: TextStyle(color: c.fg)),
       content: SizedBox(
         width: 280,
         child: GridView.count(
@@ -239,8 +244,8 @@ class _MonthPickerDialog extends StatelessWidget {
             return TextButton(
               onPressed: () => Navigator.pop(context, m),
               style: TextButton.styleFrom(
-                backgroundColor: m == current ? clrAccent.withOpacity(0.2) : null,
-                foregroundColor: m == current ? clrAccent : clrFg,
+                backgroundColor: m == current ? c.accent.withOpacity(0.2) : null,
+                foregroundColor: m == current ? c.accent : c.fg,
               ),
               child: Text(monthsEn[i].substring(0, 3)),
             );

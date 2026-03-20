@@ -1,6 +1,6 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
-import '../constants.dart';
+import '../app_theme.dart';
 import '../services/data_store.dart';
 import '../services/user_manager.dart';
 import '../services/pdf_export.dart';
@@ -48,16 +48,18 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final c = AppTheme.of(context).colors;
+
     if (_loading || _store == null) {
-      return const Scaffold(
-        backgroundColor: clrBg,
-        body: Center(child: CircularProgressIndicator(color: clrAccent)),
+      return Scaffold(
+        backgroundColor: c.bg,
+        body: Center(child: CircularProgressIndicator(color: c.accent)),
       );
     }
 
     return Scaffold(
-      backgroundColor: clrBg,
-      appBar: _buildAppBar(),
+      backgroundColor: c.bg,
+      appBar: _buildAppBar(context, c),
       body: IndexedStack(
         index: _tab,
         children: [
@@ -77,9 +79,9 @@ class _HomeScreenState extends State<HomeScreen> {
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: _tab,
         onTap: (i) => setState(() => _tab = i),
-        backgroundColor: clrBgPanel,
-        selectedItemColor: clrAccent,
-        unselectedItemColor: clrFgDim,
+        backgroundColor: c.bgPanel,
+        selectedItemColor: c.accent,
+        unselectedItemColor: c.fgDim,
         items: const [
           BottomNavigationBarItem(
             icon: Icon(Icons.calendar_month), label: 'Calendar',
@@ -92,26 +94,27 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  AppBar _buildAppBar() {
+  AppBar _buildAppBar(BuildContext context, AppColors c) {
+    final theme = AppTheme.of(context);
     return AppBar(
-      backgroundColor: clrBgPanel,
+      backgroundColor: c.bgPanel,
       elevation: 0,
       title: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Text(
+          Text(
             'Home Office Tracking',
-            style: TextStyle(color: clrAccent, fontSize: 15, fontWeight: FontWeight.bold),
+            style: TextStyle(color: c.accent, fontSize: 15, fontWeight: FontWeight.bold),
           ),
           Text(
             _users.current,
-            style: const TextStyle(color: clrFgDim, fontSize: 11),
+            style: TextStyle(color: c.fgDim, fontSize: 11),
           ),
         ],
       ),
       actions: [
         IconButton(
-          icon: const Icon(Icons.chevron_left, color: clrFg),
+          icon: Icon(Icons.chevron_left, color: c.fg),
           onPressed: _prevYear,
         ),
         GestureDetector(
@@ -120,23 +123,31 @@ class _HomeScreenState extends State<HomeScreen> {
             padding: const EdgeInsets.symmetric(vertical: 16),
             child: Text(
               '$_year',
-              style: const TextStyle(
-                color: clrFg, fontSize: 15, fontWeight: FontWeight.bold,
+              style: TextStyle(
+                color: c.fg, fontSize: 15, fontWeight: FontWeight.bold,
               ),
             ),
           ),
         ),
         IconButton(
-          icon: const Icon(Icons.chevron_right, color: clrFg),
+          icon: Icon(Icons.chevron_right, color: c.fg),
           onPressed: _nextYear,
         ),
         IconButton(
-          icon: const Icon(Icons.person, color: clrAccent),
+          icon: Icon(
+            theme.isDark ? Icons.light_mode : Icons.dark_mode,
+            color: c.accent,
+          ),
+          tooltip: theme.isDark ? 'Light mode' : 'Dark mode',
+          onPressed: theme.onToggle,
+        ),
+        IconButton(
+          icon: Icon(Icons.person, color: c.accent),
           tooltip: 'Users',
           onPressed: () => _showUserDialog(context),
         ),
         IconButton(
-          icon: const Icon(Icons.picture_as_pdf, color: clrAccent),
+          icon: Icon(Icons.picture_as_pdf, color: c.accent),
           tooltip: 'Export PDF',
           onPressed: () => exportPdf(context, _store!, _year, _users.current),
         ),
@@ -192,10 +203,11 @@ class _YearPickerDialog extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final c = AppTheme.of(context).colors;
     final years = List.generate(16, (i) => 2020 + i);
     return AlertDialog(
-      backgroundColor: clrBgPanel,
-      title: const Text('Select year', style: TextStyle(color: clrFg)),
+      backgroundColor: c.bgPanel,
+      title: Text('Select year', style: TextStyle(color: c.fg)),
       content: SizedBox(
         width: 240,
         child: GridView.count(
@@ -205,8 +217,8 @@ class _YearPickerDialog extends StatelessWidget {
           children: years.map((y) => TextButton(
             onPressed: () => Navigator.pop(context, y),
             style: TextButton.styleFrom(
-              backgroundColor: y == current ? clrAccent.withOpacity(0.2) : null,
-              foregroundColor: y == current ? clrAccent : clrFg,
+              backgroundColor: y == current ? c.accent.withOpacity(0.2) : null,
+              foregroundColor: y == current ? c.accent : c.fg,
             ),
             child: Text('$y'),
           )).toList(),
@@ -238,39 +250,40 @@ class _UserDialog extends StatefulWidget {
 class _UserDialogState extends State<_UserDialog> {
   @override
   Widget build(BuildContext context) {
+    final c = AppTheme.of(context).colors;
     return AlertDialog(
-      backgroundColor: clrBgPanel,
-      title: const Text('Users', style: TextStyle(color: clrAccent)),
+      backgroundColor: c.bgPanel,
+      title: Text('Users', style: TextStyle(color: c.accent)),
       content: SizedBox(
         width: 280,
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
             ...widget.users.users.map((name) => ListTile(
-              title: Text(name, style: const TextStyle(color: clrFg)),
+              title: Text(name, style: TextStyle(color: c.fg)),
               leading: name == widget.users.current
-                  ? const Icon(Icons.person, color: clrAccent)
-                  : const Icon(Icons.person_outline, color: clrFgDim),
+                  ? Icon(Icons.person, color: c.accent)
+                  : Icon(Icons.person_outline, color: c.fgDim),
               trailing: name == widget.users.current
                   ? null
                   : Row(
                       mainAxisSize: MainAxisSize.min,
                       children: [
                         IconButton(
-                          icon: const Icon(Icons.login, color: clrOk, size: 20),
+                          icon: Icon(Icons.login, color: c.ok, size: 20),
                           onPressed: () => widget.onSwitch(name),
                         ),
                         IconButton(
-                          icon: const Icon(Icons.delete_outline, color: clrDanger, size: 20),
+                          icon: Icon(Icons.delete_outline, color: c.danger, size: 20),
                           onPressed: () => _confirmDelete(context, name),
                         ),
                       ],
                     ),
             )),
-            const Divider(color: clrSeparator),
+            Divider(color: c.separator),
             TextButton.icon(
-              icon: const Icon(Icons.add, color: clrOk),
-              label: const Text('Add user', style: TextStyle(color: clrOk)),
+              icon: Icon(Icons.add, color: c.ok),
+              label: Text('Add user', style: TextStyle(color: c.ok)),
               onPressed: () => _promptAdd(context),
             ),
           ],
@@ -279,7 +292,7 @@ class _UserDialogState extends State<_UserDialog> {
       actions: [
         TextButton(
           onPressed: () => Navigator.pop(context),
-          child: const Text('Close', style: TextStyle(color: clrAccent)),
+          child: Text('Close', style: TextStyle(color: c.accent)),
         ),
       ],
     );
@@ -289,36 +302,7 @@ class _UserDialogState extends State<_UserDialog> {
     final ctrl = TextEditingController();
     final ok   = await showDialog<bool>(
       context: context,
-      builder: (_) => AlertDialog(
-        backgroundColor: clrBgPanel,
-        title: const Text('Add user', style: TextStyle(color: clrFg)),
-        content: TextField(
-          controller: ctrl,
-          autofocus: true,
-          style: const TextStyle(color: clrFg),
-          decoration: const InputDecoration(
-            hintText: 'Name',
-            hintStyle: TextStyle(color: clrFgDim),
-            enabledBorder: UnderlineInputBorder(
-              borderSide: BorderSide(color: clrSeparator),
-            ),
-            focusedBorder: UnderlineInputBorder(
-              borderSide: BorderSide(color: clrAccent),
-            ),
-          ),
-          onSubmitted: (_) => Navigator.pop(context, true),
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context, false),
-            child: const Text('Cancel', style: TextStyle(color: clrFgDim)),
-          ),
-          TextButton(
-            onPressed: () => Navigator.pop(context, true),
-            child: const Text('Add', style: TextStyle(color: clrOk)),
-          ),
-        ],
-      ),
+      builder: (_) => _AddUserDialog(ctrl: ctrl),
     );
     if (ok == true && ctrl.text.isNotEmpty) {
       final added = await widget.onAdd(ctrl.text.trim());
@@ -333,28 +317,83 @@ class _UserDialogState extends State<_UserDialog> {
   Future<void> _confirmDelete(BuildContext context, String name) async {
     final ok = await showDialog<bool>(
       context: context,
-      builder: (_) => AlertDialog(
-        backgroundColor: clrBgPanel,
-        title: Text('Delete "$name"?', style: const TextStyle(color: clrDanger)),
-        content: const Text(
-          'This will permanently delete the user and all their data.\n\nThis cannot be undone.',
-          style: TextStyle(color: clrFg),
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context, false),
-            child: const Text('Cancel', style: TextStyle(color: clrFgDim)),
-          ),
-          TextButton(
-            onPressed: () => Navigator.pop(context, true),
-            child: const Text('Delete', style: TextStyle(color: clrDanger)),
-          ),
-        ],
-      ),
+      builder: (_) => _DeleteUserDialog(name: name),
     );
     if (ok == true) {
       await widget.onDelete(name);
       setState(() {});
     }
+  }
+}
+
+// ── Add user dialog ───────────────────────────────────────────────────────────
+
+class _AddUserDialog extends StatelessWidget {
+  final TextEditingController ctrl;
+  const _AddUserDialog({required this.ctrl});
+
+  @override
+  Widget build(BuildContext context) {
+    final c = AppTheme.of(context).colors;
+    return AlertDialog(
+      backgroundColor: c.bgPanel,
+      title: Text('Add user', style: TextStyle(color: c.fg)),
+      content: TextField(
+        controller: ctrl,
+        autofocus: true,
+        style: TextStyle(color: c.fg),
+        decoration: InputDecoration(
+          hintText: 'Name',
+          hintStyle: TextStyle(color: c.fgDim),
+          enabledBorder: UnderlineInputBorder(
+            borderSide: BorderSide(color: c.separator),
+          ),
+          focusedBorder: UnderlineInputBorder(
+            borderSide: BorderSide(color: c.accent),
+          ),
+        ),
+        onSubmitted: (_) => Navigator.pop(context, true),
+      ),
+      actions: [
+        TextButton(
+          onPressed: () => Navigator.pop(context, false),
+          child: Text('Cancel', style: TextStyle(color: c.fgDim)),
+        ),
+        TextButton(
+          onPressed: () => Navigator.pop(context, true),
+          child: Text('Add', style: TextStyle(color: c.ok)),
+        ),
+      ],
+    );
+  }
+}
+
+// ── Delete user confirmation dialog ──────────────────────────────────────────
+
+class _DeleteUserDialog extends StatelessWidget {
+  final String name;
+  const _DeleteUserDialog({required this.name});
+
+  @override
+  Widget build(BuildContext context) {
+    final c = AppTheme.of(context).colors;
+    return AlertDialog(
+      backgroundColor: c.bgPanel,
+      title: Text('Delete "$name"?', style: TextStyle(color: c.danger)),
+      content: Text(
+        'This will permanently delete the user and all their data.\n\nThis cannot be undone.',
+        style: TextStyle(color: c.fg),
+      ),
+      actions: [
+        TextButton(
+          onPressed: () => Navigator.pop(context, false),
+          child: Text('Cancel', style: TextStyle(color: c.fgDim)),
+        ),
+        TextButton(
+          onPressed: () => Navigator.pop(context, true),
+          child: Text('Delete', style: TextStyle(color: c.danger)),
+        ),
+      ],
+    );
   }
 }

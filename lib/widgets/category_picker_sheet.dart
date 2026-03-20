@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../app_theme.dart';
 import '../constants.dart';
 
 /// Bottom sheet for assigning or clearing a day's category.
@@ -9,9 +10,10 @@ Future<String?> showCategoryPicker(
   required int year,
   String? current,
 }) {
+  final c = AppTheme.of(context).colors;
   return showModalBottomSheet<String>(
     context: context,
-    backgroundColor: clrBgPanel,
+    backgroundColor: c.bgPanel,
     shape: const RoundedRectangleBorder(
       borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
     ),
@@ -34,6 +36,7 @@ class _CategoryPickerSheet extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final c = AppTheme.of(context).colors;
     return SafeArea(
       child: Column(
         mainAxisSize: MainAxisSize.min,
@@ -43,7 +46,7 @@ class _CategoryPickerSheet extends StatelessWidget {
             margin: const EdgeInsets.only(top: 10, bottom: 6),
             width: 40, height: 4,
             decoration: BoxDecoration(
-              color: clrSeparator,
+              color: c.separator,
               borderRadius: BorderRadius.circular(2),
             ),
           ),
@@ -51,24 +54,24 @@ class _CategoryPickerSheet extends StatelessWidget {
             padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
             child: Text(
               '${monthsEn[month - 1]} $day, $year',
-              style: const TextStyle(
-                color: clrAccent,
+              style: TextStyle(
+                color: c.accent,
                 fontSize: 14,
                 fontWeight: FontWeight.bold,
               ),
             ),
           ),
-          const Divider(color: clrSeparator, height: 1),
+          Divider(color: c.separator, height: 1),
           ...categories.map((cat) => _CategoryTile(
                 cat: cat,
                 selected: cat.code == current,
                 onTap: () => Navigator.pop(context, cat.code),
               )),
-          const Divider(color: clrSeparator, height: 1),
+          Divider(color: c.separator, height: 1),
           ListTile(
-            leading: const Icon(Icons.clear, color: clrFgDim),
-            title: const Text('Clear', style: TextStyle(color: clrFgDim)),
-            onTap: () => Navigator.pop(context, ''),  // empty string = clear
+            leading: Icon(Icons.clear, color: c.fgDim),
+            title: Text('Clear', style: TextStyle(color: c.fgDim)),
+            onTap: () => Navigator.pop(context, ''),
           ),
         ],
       ),
@@ -89,6 +92,7 @@ class _CategoryTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final c = AppTheme.of(context).colors;
     return ListTile(
       leading: Container(
         width: 16, height: 16,
@@ -97,9 +101,9 @@ class _CategoryTile extends StatelessWidget {
           borderRadius: BorderRadius.circular(3),
         ),
       ),
-      title: Text(cat.label, style: TextStyle(color: selected ? clrAccent : clrFg)),
+      title: Text(cat.label, style: TextStyle(color: selected ? c.accent : c.fg)),
       trailing: selected
-          ? const Icon(Icons.check, color: clrAccent, size: 18)
+          ? Icon(Icons.check, color: c.accent, size: 18)
           : null,
       onTap: onTap,
     );

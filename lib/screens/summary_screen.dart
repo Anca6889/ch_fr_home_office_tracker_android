@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../app_theme.dart';
 import '../constants.dart';
 import '../models/compliance_result.dart';
 import '../services/compliance_engine.dart';
@@ -38,8 +39,9 @@ class _StatusBanner extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final bg = result.isOk ? const Color(0xFF1B4332) : const Color(0xFF4A0A14);
-    final fg = result.isOk ? clrOk : clrDanger;
+    final c  = AppTheme.of(context).colors;
+    final bg = result.isOk ? c.statusOkBg : c.statusDangerBg;
+    final fg = result.isOk ? c.ok : c.danger;
 
     return Container(
       width: double.infinity,
@@ -65,8 +67,9 @@ class _QuotaCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final c     = AppTheme.of(context).colors;
     final pct   = result.teleworkPct;
-    final color = result.isOk ? clrOk : clrDanger;
+    final color = result.isOk ? c.ok : c.danger;
 
     return _Card(
       title: 'Remote Work Quota',
@@ -78,7 +81,7 @@ class _QuotaCard extends StatelessWidget {
           ),
           Text(
             'limit: 40% of ${result.actualDays} working days = ${result.maxTeleworkDays} days',
-            style: const TextStyle(color: clrFgDim, fontSize: 12),
+            style: TextStyle(color: c.fgDim, fontSize: 12),
           ),
           const SizedBox(height: 12),
           // Progress bar
@@ -88,7 +91,7 @@ class _QuotaCard extends StatelessWidget {
               height: 18,
               child: Stack(
                 children: [
-                  Container(color: clrBgCell),
+                  Container(color: c.bgCell),
                   FractionallySizedBox(
                     widthFactor: (pct / 100).clamp(0.0, 1.0),
                     child: Container(color: color),
@@ -98,7 +101,7 @@ class _QuotaCard extends StatelessWidget {
                     widthFactor: 0.40,
                     child: Align(
                       alignment: Alignment.centerRight,
-                      child: Container(width: 2, color: clrDanger),
+                      child: Container(width: 2, color: c.danger),
                     ),
                   ),
                   Center(
@@ -133,6 +136,7 @@ class _CategoryCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final c = AppTheme.of(context).colors;
     return _Card(
       title: 'Day Breakdown',
       child: Column(
@@ -149,12 +153,12 @@ class _CategoryCard extends StatelessWidget {
               ),
               const SizedBox(width: 10),
               Expanded(
-                child: Text(cat.label, style: const TextStyle(color: clrFg, fontSize: 13)),
+                child: Text(cat.label, style: TextStyle(color: c.fg, fontSize: 13)),
               ),
               Text(
                 '${counts[cat.code] ?? 0} days',
-                style: const TextStyle(
-                  color: clrFg, fontSize: 13, fontWeight: FontWeight.bold,
+                style: TextStyle(
+                  color: c.fg, fontSize: 13, fontWeight: FontWeight.bold,
                 ),
               ),
             ],
@@ -173,6 +177,7 @@ class _ImputationCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final c = AppTheme.of(context).colors;
     return _Card(
       title: 'Imputation Details',
       child: Column(
@@ -180,7 +185,6 @@ class _ImputationCard extends StatelessWidget {
           _MetricRow(
             label: 'FR missions imputed (max 10, within 40%):',
             value: '${result.missionsFranceImputed} / 10 days',
-            valueColor: clrFg,
           ),
           _MetricRow(
             label: 'Outside-FR imputed within 40% quota:',
@@ -189,7 +193,7 @@ class _ImputationCard extends StatelessWidget {
           _MetricRow(
             label: 'Outside-FR total → 2005 exchange:',
             value: '${result.hfrExchangeUsed} / 45 days',
-            valueColor: result.hfrExchangeUsed > maxHorsFrExchange ? clrDanger : clrFg,
+            valueColor: result.hfrExchangeUsed > maxHorsFrExchange ? c.danger : null,
           ),
           _MetricRow(
             label: '2005 exchange remaining:',
@@ -206,30 +210,35 @@ class _ImputationCard extends StatelessWidget {
 }
 
 class _MetricRow extends StatelessWidget {
-  final String label;
-  final String value;
-  final Color  valueColor;
+  final String  label;
+  final String  value;
+  final Color?  valueColor;
 
   const _MetricRow({
     required this.label,
     required this.value,
-    this.valueColor = clrFgDim,
+    this.valueColor,
   });
 
   @override
   Widget build(BuildContext context) {
+    final c = AppTheme.of(context).colors;
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 4),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Expanded(
-            child: Text(label, style: const TextStyle(color: clrFgDim, fontSize: 12)),
+            child: Text(label, style: TextStyle(color: c.fgDim, fontSize: 12)),
           ),
           const SizedBox(width: 8),
           Text(
             value,
-            style: TextStyle(color: valueColor, fontSize: 12, fontWeight: FontWeight.bold),
+            style: TextStyle(
+              color: valueColor ?? c.fgDim,
+              fontSize: 12,
+              fontWeight: FontWeight.bold,
+            ),
           ),
         ],
       ),
@@ -246,10 +255,11 @@ class _Card extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final c = AppTheme.of(context).colors;
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: clrBgPanel,
+        color: c.bgPanel,
         borderRadius: BorderRadius.circular(12),
       ),
       child: Column(
@@ -257,12 +267,12 @@ class _Card extends StatelessWidget {
         children: [
           Text(
             title,
-            style: const TextStyle(
-              color: clrAccent, fontSize: 13, fontWeight: FontWeight.bold,
+            style: TextStyle(
+              color: c.accent, fontSize: 13, fontWeight: FontWeight.bold,
             ),
           ),
           const SizedBox(height: 4),
-          const Divider(color: clrSeparator),
+          Divider(color: c.separator),
           const SizedBox(height: 4),
           child,
         ],

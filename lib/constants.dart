@@ -56,16 +56,3 @@ const List<String> monthsEn = [
 
 const List<String> daysEn = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
 
-// ── Theme colours ─────────────────────────────────────────────────────────────
-
-const Color clrBg        = Color(0xFF1A1B2E);
-const Color clrBgPanel   = Color(0xFF252640);
-const Color clrBgCell    = Color(0xFF2E2F50);
-const Color clrBgCellWk  = Color(0xFF1E1F35);
-const Color clrBgToday   = Color(0xFF3A3B6A);
-const Color clrFg        = Color(0xFFD0D3F0);
-const Color clrFgDim     = Color(0xFF6C6F9C);
-const Color clrOk        = Color(0xFF5CBF8A);
-const Color clrDanger    = Color(0xFFE85C6A);
-const Color clrAccent    = Color(0xFF7EB8F0);
-const Color clrSeparator = Color(0xFF3A3B5C);

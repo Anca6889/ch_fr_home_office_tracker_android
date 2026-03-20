@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../app_theme.dart';
 import '../constants.dart';
 import '../services/data_store.dart';
 import 'category_picker_sheet.dart';
@@ -19,9 +20,10 @@ class CalendarGrid extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final weeks    = _buildWeeks(year, month);
-    final dayData  = store.monthDays(year, month);
-    final today    = DateTime.now();
+    final c       = AppTheme.of(context).colors;
+    final weeks   = _buildWeeks(year, month);
+    final dayData = store.monthDays(year, month);
+    final today   = DateTime.now();
 
     return Column(
       children: [
@@ -36,7 +38,7 @@ class CalendarGrid extends StatelessWidget {
                   child: Text(
                     e.value,
                     style: TextStyle(
-                      color: isWknd ? clrFgDim : clrAccent,
+                      color: isWknd ? c.fgDim : c.accent,
                       fontSize: 11,
                       fontWeight: FontWeight.bold,
                     ),
@@ -46,7 +48,7 @@ class CalendarGrid extends StatelessWidget {
             );
           }).toList(),
         ),
-        const Divider(color: clrSeparator, height: 1),
+        Divider(color: c.separator, height: 1),
         // Weeks
         ...weeks.map((week) => Expanded(
               child: Row(
@@ -84,7 +86,7 @@ class CalendarGrid extends StatelessWidget {
       day: dayNum, month: month, year: year,
       current: current,
     );
-    if (result == null) return; // dismissed
+    if (result == null) return;
     await store.set(year, month, dayNum, result.isEmpty ? null : result);
     onChanged();
   }
@@ -125,10 +127,12 @@ class _DayCell extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final c = AppTheme.of(context).colors;
+
     if (dayNum == 0) {
       return Container(
         margin: const EdgeInsets.all(1),
-        decoration: const BoxDecoration(color: clrBg),
+        decoration: BoxDecoration(color: c.bg),
       );
     }
 
@@ -140,14 +144,14 @@ class _DayCell extends StatelessWidget {
       bg    = categoryColor(category!);
       numFg = Colors.white;
     } else if (isToday) {
-      bg    = clrBgToday;
-      numFg = clrAccent;
+      bg    = c.bgToday;
+      numFg = c.accent;
     } else if (isWknd) {
-      bg    = clrBgCellWk;
-      numFg = clrFgDim;
+      bg    = c.bgCellWk;
+      numFg = c.fgDim;
     } else {
-      bg    = clrBgCell;
-      numFg = clrFg;
+      bg    = c.bgCell;
+      numFg = c.fg;
     }
 
     return GestureDetector(
@@ -157,7 +161,7 @@ class _DayCell extends StatelessWidget {
         decoration: BoxDecoration(
           color: bg,
           border: isToday
-              ? Border.all(color: clrAccent, width: 1.5)
+              ? Border.all(color: c.accent, width: 1.5)
               : null,
           borderRadius: BorderRadius.circular(4),
         ),
