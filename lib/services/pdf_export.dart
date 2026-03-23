@@ -344,7 +344,7 @@ pw.Widget _buildSummary(
                 _metric('Effective remote',   '${r.effectiveTelework}'),
                 _metric('Remote rate',        '${r.teleworkPct.toStringAsFixed(1)}%'),
                 _metric('Days remaining',     '${r.remainingTeleworkDays}'),
-                _metric('2005 exchange',      '${r.hfrExchangeUsed} / 45'),
+                _metric('2005 exch. (MXX+NRR)', '${r.hfrExchangeUsed} / 45'),
               ],
             ),
           ),

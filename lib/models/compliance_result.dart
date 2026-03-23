@@ -5,6 +5,7 @@ class ComplianceResult {
   final int    domicileDays;
   final int    missionsFrance;
   final int    missionsHorsFrance;
+  final int    nonRetourDays;
   final int    quotaRemaining;
   final int    missionsFranceImputed;
   final int    missionsHorsFranceImputed;
@@ -23,6 +24,7 @@ class ComplianceResult {
     required this.domicileDays,
     required this.missionsFrance,
     required this.missionsHorsFrance,
+    required this.nonRetourDays,
     required this.quotaRemaining,
     required this.missionsFranceImputed,
     required this.missionsHorsFranceImputed,

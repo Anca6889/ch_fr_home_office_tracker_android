@@ -2,11 +2,12 @@ import 'package:flutter/material.dart';
 
 // ── Category codes ────────────────────────────────────────────────────────────
 
-const String catBureau    = 'bureau';
-const String catMaison    = 'maison';
-const String catEnFrance  = 'en_france';
+const String catBureau     = 'bureau';
+const String catMaison     = 'maison';
+const String catEnFrance   = 'en_france';
 const String catHorsFrance = 'hors_france';
-const String catConge     = 'conge';
+const String catNonRetour  = 'non_retour';
+const String catConge      = 'conge';
 
 class CategoryInfo {
   final String code;
@@ -20,6 +21,7 @@ const List<CategoryInfo> categories = [
   CategoryInfo(catMaison,     'Home (remote work)',     Color(0xFF27AE60)),
   CategoryInfo(catEnFrance,   'Mission in France',      Color(0xFFE74C3C)),
   CategoryInfo(catHorsFrance, 'Mission outside France', Color(0xFF9B59B6)),
+  CategoryInfo(catNonRetour,  'Non-return day',         Color(0xFFE67E22)),
   CategoryInfo(catConge,      'Vacation / Sick leave',  Color(0xFF7F8C8D)),
 ];
 
@@ -36,6 +38,7 @@ String categoryShort(String code) {
     case catMaison:     return 'HOM';
     case catEnFrance:   return 'MFR';
     case catHorsFrance: return 'MXX';
+    case catNonRetour:  return 'NRR';
     case catConge:      return 'VAC';
     default:            return '';
   }

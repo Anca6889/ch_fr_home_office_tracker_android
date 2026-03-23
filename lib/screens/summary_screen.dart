@@ -187,12 +187,13 @@ class _ImputationCard extends StatelessWidget {
             value: '${result.missionsFranceImputed} / 10 days',
           ),
           _MetricRow(
-            label: 'Outside-FR imputed within 40% quota:',
+            label: 'Outside-FR + non-return imputed (40% quota):',
             value: '${result.missionsHorsFranceImputed} days',
           ),
           _MetricRow(
-            label: 'Outside-FR total → 2005 exchange:',
-            value: '${result.hfrExchangeUsed} / 45 days',
+            label: 'Outside-FR + non-return → 2005 exchange:',
+            value: '${result.hfrExchangeUsed} / 45 days'
+                   '  (${result.missionsHorsFrance} MXX + ${result.nonRetourDays} NRR)',
             valueColor: result.hfrExchangeUsed > maxHorsFrExchange ? c.danger : null,
           ),
           _MetricRow(
