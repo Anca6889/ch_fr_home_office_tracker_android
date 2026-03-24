@@ -2,7 +2,7 @@
 
 ---
 
-🇫🇷 [Version française](#version-française) | 🇬🇧 [English version](#english-version)
+🇫🇷 [Version française](#version-française) | 🇬🇧 [English version](#english-version) | 🇩🇪 [Deutsche Version](#deutsche-version)
 
 ---
 
@@ -245,3 +245,124 @@ Stored in the app's private documents directory (no external storage permission 
 | Multi-user | Add / switch / delete users via the 👤 icon in the AppBar |
 | PDF export | Full-year trilingual report (FR/EN/DE) shared via Android share sheet |
 | Theme | Light / dark mode toggle |
+
+---
+
+## Deutsche Version
+
+Mobile Anwendung zur Erfassung von Homeoffice-Tagen und zur Überprüfung der Konformität mit den für Grenzgänger geltenden Sozialversicherungsabkommen.
+
+### Wichtiger Hinweis
+
+> **⚠ Diese Anwendung ist ein persönliches Hilfsmittel. Sie stellt in keiner Weise eine rechtliche, steuerliche oder administrative Beratung dar.**
+
+#### Nutzung und Haftung
+
+Diese Anwendung ist für den **ausschließlich persönlichen Gebrauch** konzipiert. Sie funktioniert **vollständig offline**, ohne Internetverbindung, ohne Datenerfassung und ohne Übertragung von Informationen an externe Server. Alle Daten verbleiben auf dem Gerät des Nutzers.
+
+**Die in dieser Anwendung implementierten Berechnungsregeln (40%-Quote, 45-Tage-Regelung, Kategorienzurechnungslogik usw.) spiegeln die persönliche Auslegung des Autors** der anwendbaren Texte und Abkommen wider. Diese Auslegungen können unvollständig oder ungenau sein oder nicht der offiziellen Position der zuständigen Behörden entsprechen.
+
+Jeder Nutzer ist dafür verantwortlich:
+
+- Die **Berechnungsregeln bei den zuständigen Stellen zu überprüfen** (Sozialversicherungsträger, Arbeitgeber, Steuerberater, zuständige nationale Behörden usw.), bevor er Entscheidungen auf Grundlage der angezeigten Ergebnisse trifft.
+- **Sicherzustellen, dass die als Referenz herangezogenen bilateralen Abkommen noch in Kraft sind** und seit der letzten Aktualisierung dieser Anwendung nicht geändert, ergänzt oder ersetzt wurden. Bilaterale Sozialversicherungsabkommen zwischen Staaten können sich jederzeit ändern.
+- **Die Ergebnisse dieser Anwendung nicht ausschließlich** als Nachweis gegenüber einem Arbeitgeber, einer Behörde oder einem Sozialversicherungsträger zu verwenden.
+
+**Der Autor dieser Anwendung übernimmt keine Haftung** für Berechnungsfehler, fehlerhafte Auslegungen der Regeln, nicht in der Anwendung berücksichtigte Änderungen der Abkommen oder für jegliche Folgen (verwaltungsrechtlicher, finanzieller oder sozialer Natur), die sich aus der Nutzung der erzeugten Ergebnisse ergeben. Jeder Nutzer trägt die alleinige Verantwortung für die Nutzung dieses Tools und die daraus abgeleiteten Entscheidungen.
+
+### Übersicht
+
+Die Anwendung ermöglicht:
+
+- Erfassung und Visualisierung von Arbeitstagen nach Kategorie (Büro, Homeoffice, Dienstreise, Urlaub usw.) in einem Monatskalender
+- Echtzeit-Berechnung der Konformität mit der **40%-Quote** der außerhalb des Beschäftigungslands geleisteten Tage
+- Anwendung der **45-Tage-Austauschregelung** aus dem Abkommen von 2005
+- Erstellung eines **dreisprachigen PDF-Berichts** (FR / EN / DE) über die Android-Freigabefunktion
+- Verwaltung mehrerer Nutzer auf demselben Gerät
+
+### Offline-Betrieb
+
+Die Anwendung benötigt **zu keinem Zeitpunkt eine Internetverbindung**. Alle Daten werden lokal im privaten Verzeichnis der Anwendung auf dem Gerät gespeichert. Es werden keine Daten synchronisiert, geteilt oder übertragen.
+
+### Installation
+
+#### Voraussetzungen
+
+- [Flutter SDK](https://docs.flutter.dev/get-started/install/windows) installiert und im PATH
+- Android Studio (Android SDK + Emulator) oder ein Android-Gerät mit aktiviertem USB-Debugging
+
+#### Ersteinrichtung
+
+```bash
+# 1 — In den gewünschten Ordner wechseln
+cd path\to\your\folder
+
+# 2 — Flutter-Projekt erstellen
+flutter create home_office_android --org com.yourname --project-name home_office_tracker
+
+# 3 — lib/ und pubspec.yaml durch die Dateien dieses Repos ersetzen
+
+# 4 — Abhängigkeiten installieren
+cd home_office_android
+flutter pub get
+
+# 5 — Anwendung starten
+flutter run
+```
+
+> `flutter devices` zeigt verfügbare Geräte an.
+
+#### Release-APK erstellen (direkte Installation auf dem Telefon)
+
+```bash
+flutter build apk --release
+```
+
+APK-Pfad:
+```
+build/app/outputs/flutter-apk/app-release.apk
+```
+
+Auf das Telefon übertragen und installieren (in den Android-Einstellungen „Unbekannte Quellen" aktivieren).
+
+### Projektstruktur
+
+```
+lib/
+├── main.dart                        # Einstiegspunkt + Theme
+├── constants.dart                   # Kategoriecodes, Schwellenwerte, Farben
+├── models/
+│   └── compliance_result.dart       # Datenklasse für Konformitätsergebnis
+├── services/
+│   ├── data_store.dart              # JSON-Persistenz pro Nutzer
+│   ├── user_manager.dart            # Nutzerverwaltung
+│   ├── compliance_engine.dart       # 40%-Quote + 45-Tage-Austauschlogik
+│   └── pdf_export.dart              # PDF-Erstellung (printing-Paket)
+├── screens/
+│   ├── home_screen.dart             # Haupt-Scaffold, AppBar, Navigation
+│   ├── calendar_screen.dart         # Monatskalender-Tab
+│   └── summary_screen.dart          # Konformitätsstatistik-Tab
+└── widgets/
+    ├── calendar_grid.dart           # 7×6-Tage-Raster
+    └── category_picker_sheet.dart   # Kategorieauswahl (Bottom Sheet)
+```
+
+### Datendateien
+
+Gespeichert im privaten App-Verzeichnis (keine externe Speicherberechtigung erforderlich):
+
+- `home_office_users.json` — Nutzerliste
+- `home_office_<name>.json` — Tagesdaten pro Nutzer
+
+### Funktionen
+
+| Funktion | Details |
+|---|---|
+| Kalender | Monatsraster — Werktag antippen zum Zuweisen einer Kategorie, nach rechts wischen zum Löschen |
+| Navigation | Monatsnavigationspfeile + Monat-/Jahresauswahl |
+| Jahresauswahl | Auf das Jahr in der AppBar tippen |
+| Konformität | Echtzeit-Berechnung 40%-Quote + 45-Tage-Austauschregelung (Abkommen 2005) |
+| Zusammenfassung | Statusanzeige, Fortschrittsbalken, Kategoriezähler, Zurechnungsdetails |
+| Mehrere Nutzer | Hinzufügen / Wechseln / Löschen über das 👤-Symbol in der AppBar |
+| PDF-Export | Jahresbericht dreisprachig (FR/EN/DE) über Android-Freigabe |
+| Theme | Hell-/Dunkel-Modus umschalten |
